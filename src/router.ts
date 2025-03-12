@@ -1,17 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import BlockPage from './Pages/BlockPage.vue'
-import Home from './Pages/HomePage.vue'
 
 const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Home
+        component: () => import('./Pages/HomePage.vue')
     },
     {
         path: '/block',
         name: 'Block',
-        component: BlockPage
+        component: () => import('./Pages/BlockNewSitePage.vue')
+    },
+    {
+        path: '/edit/:site',
+        name: 'Edit',
+        component: () => import('./Pages/EditPage.vue')
     },
     {
         path: '/:pathMatch(.*)*',
