@@ -1,30 +1,42 @@
 <script setup lang="ts">
     import { useRouter } from 'vue-router';
+    import type { BlockedSite } from '../types/blockedSites';
 
     const router = useRouter();
 
     const props = defineProps<{
-        blockedPage: string
+        blockedSite: BlockedSite
     }>()
 
     const emit = defineEmits<{
+        disable: [site: string],
         delete: [site: string]
     }>();
 
     const handleEdit = () => {
-        router.push(`/edit/${props.blockedPage}`);
+        router.push(`/edit/${props.blockedSite}`);
+    };
+
+    const handleDisable = () => {
+        emit('disable', props.blockedSite.url);
     };
 
     const handleDelete = () => {
-        emit('delete', props.blockedPage);
+        emit('delete', props.blockedSite.url);
     };
 </script>
 
 <template>
-    <tr class="row">
-        <td class="td-page"> {{ blockedPage }} </td>
+    <tr class="row" :class="{ 'disabled': blockedSite.disabled }">
+        <td class="td-page">{{ blockedSite.url }}</td>
         <td>
             <div class="btn-group">
+                <input 
+                    type="checkbox" 
+                    class="disable-checkbox" 
+                    :checked="!blockedSite.disabled"
+                    @change="handleDisable" 
+                />
                 <button class="edit-btn" @click="handleEdit">Edit</button>
                 <button class="delete-btn" @click="handleDelete">Delete</button>
             </div>
@@ -59,6 +71,16 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
+    }
+
+    .disabled {
+        opacity: 0.5;
+    }
+
+    .disable-checkbox {
+        cursor: pointer;
+        width: 1rem;
+        height: 1rem;
     }
 
     .delete-btn {
