@@ -36,7 +36,7 @@
 			const sites = result.blockedSites || [];
 			
 			// Filter out the deleted site
-			const updatedSites = sites.filter((s: string) => s !== site);
+			const updatedSites = sites.filter((s: BlockedSite) => s.url !== site);
 			
 			// Save back to storage
 			await chrome.storage.sync.set({ blockedSites: updatedSites });

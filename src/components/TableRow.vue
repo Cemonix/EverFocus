@@ -14,7 +14,7 @@
     }>();
 
     const handleEdit = () => {
-        router.push(`/edit/${props.blockedSite}`);
+        router.push(`/edit/${props.blockedSite.url}`);
     };
 
     const handleDisable = () => {
