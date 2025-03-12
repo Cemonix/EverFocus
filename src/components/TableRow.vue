@@ -1,7 +1,23 @@
 <script setup lang="ts">
-    defineProps<{
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
+
+    const props = defineProps<{
         blockedPage: string
     }>()
+
+    const emit = defineEmits<{
+        delete: [site: string]
+    }>();
+
+    const handleEdit = () => {
+        router.push(`/edit/${props.blockedPage}`);
+    };
+
+    const handleDelete = () => {
+        emit('delete', props.blockedPage);
+    };
 </script>
 
 <template>
@@ -9,8 +25,8 @@
         <td class="td-page"> {{ blockedPage }} </td>
         <td>
             <div class="btn-group">
-                <button class="edit-btn">Edit</button>
-                <button class="delete-btn">Delete</button>
+                <button class="edit-btn" @click="handleEdit">Edit</button>
+                <button class="delete-btn" @click="handleDelete">Delete</button>
             </div>
         </td>
     </tr>
