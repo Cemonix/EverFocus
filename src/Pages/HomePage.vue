@@ -1,14 +1,33 @@
 <script setup lang="ts">
 	import { ref, onMounted } from 'vue';
 	import TableRow from '../components/TableRow.vue';
+	import type { BlockedSite } from '../types/blockedSites';
 
-	const blockedPages = ref<string[]>([]);
+	const blockedSites = ref<BlockedSite[]>([]);
 
-	onMounted(() => {
-		chrome.storage.sync.get(['blockedSites'], (result) => {
-			blockedPages.value = result.blockedSites || [];
-		});
+	onMounted(async () => {
+		const result = await chrome.storage.sync.get(['blockedSites']);
+		// Convert existing array format to new format if needed
+		blockedSites.value = result.blockedSites?.map((site: string | BlockedSite) => {
+			if (typeof site === 'string') {
+				return { url: site, disabled: false };
+			}
+			return site;
+		}) || [];
 	});
+
+	const handleDisable = async (url: string) => {
+		try {
+			const updatedSites = blockedSites.value.map(site => 
+				site.url === url ? { ...site, disabled: !site.disabled } : site
+			);
+			
+			await chrome.storage.sync.set({ blockedSites: updatedSites });
+			blockedSites.value = updatedSites;
+		} catch (err) {
+			console.error('Failed to update site status:', err);
+		}
+	};
 
 	const handleDelete = async (site: string) => {
 		try {
@@ -23,7 +42,7 @@
 			await chrome.storage.sync.set({ blockedSites: updatedSites });
 			
 			// Update local state
-			blockedPages.value = updatedSites;
+			blockedSites.value = updatedSites;
 		} catch (err) {
 			console.error('Failed to delete site:', err);
 		}
@@ -32,7 +51,7 @@
 
 <template>
 	<div class="table-container">
-		<table v-if="blockedPages.length > 0">
+		<table v-if="blockedSites.length > 0">
 			<thead>
                 <tr>
                     <th>Blocked Page</th>
@@ -41,9 +60,10 @@
             </thead>
 			<tbody>
 				<TableRow 
-                    v-for="page in blockedPages" 
-                    :key="page" 
-                    :blocked-page="page"
+                    v-for="site in blockedSites"
+                    :key="site.url"
+					:blocked-site="site"
+					@disable="handleDisable"
                     @delete="handleDelete"
                 />
 			</tbody>
