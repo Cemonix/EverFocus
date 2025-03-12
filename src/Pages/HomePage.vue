@@ -29,16 +29,12 @@
 		}
 	};
 
-	const handleDelete = async (site: string) => {
+	const handleDelete = async (url: string) => {
 		try {
-			// Get current blocked sites
-			const result = await chrome.storage.sync.get(['blockedSites']);
-			const sites = result.blockedSites || [];
+			// Filter out the deleted site using local state
+			const updatedSites = blockedSites.value.filter(site => site.url !== url);
 			
-			// Filter out the deleted site
-			const updatedSites = sites.filter((s: BlockedSite) => s.url !== site);
-			
-			// Save back to storage
+			// Save to storage
 			await chrome.storage.sync.set({ blockedSites: updatedSites });
 			
 			// Update local state
