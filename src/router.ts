@@ -4,17 +4,17 @@ const routes = [
     {
         path: '/',
         name: 'Home',
-        component: () => import('./Pages/HomePage.vue')
+        component: () => import('./pages/HomePage.vue')
     },
     {
         path: '/block',
         name: 'Block',
-        component: () => import('./Pages/BlockNewSitePage.vue')
+        component: () => import('./pages/BlockNewSitePage.vue')
     },
     {
         path: '/edit/:site',
         name: 'Edit',
-        component: () => import('./Pages/EditPage.vue')
+        component: () => import('./pages/EditPage.vue')
     },
     {
         path: '/:pathMatch(.*)*',
