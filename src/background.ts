@@ -1,10 +1,22 @@
 chrome.webNavigation.onBeforeNavigate.addListener(
     (details: chrome.webNavigation.WebNavigationParentedCallbackDetails) => {
-    console.log('Navigating to:', details.url);
-    
-    // Example: Check if URL is in blocked list
-    if (details.url.includes('youtube.com')) {
-        // You can implement blocking logic here
-        console.log('This site should be blocked');
-    }
+    // Get the hostname from the URL
+    const url = new URL(details.url);
+    const hostname = url.hostname.replace(/^www\./, ''); // Remove www. if present
+
+    // Check if the hostname is in blocked sites
+    chrome.storage.sync.get(['blockedSites'], (result) => {
+        const blockedSites = result.blockedSites || [];
+        if (blockedSites.some((site: string) => {
+            // Remove www. from blocked site if present
+            const normalizedSite = site.replace(/^www\./, '');
+            // Check for exact domain match
+            return hostname === normalizedSite;
+        })) {
+            // Redirect to extension's blocked page
+            chrome.tabs.update(details.tabId, {
+                url: chrome.runtime.getURL('blocked.html')
+            });
+        }
+    });
 });
