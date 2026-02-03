@@ -8,11 +8,15 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html',
+        cooldown: 'cooldown.html',
         background: 'src/background.ts',
+        content: 'src/content/youtube.ts',
       },
       output: {
         entryFileNames: chunk => {
-          return chunk.name === 'background' ? '[name].js' : 'assets/[name].[hash].js'
+          if (chunk.name === 'background') return '[name].js';
+          if (chunk.name === 'content') return '[name].js';
+          return 'assets/[name].[hash].js';
         }
       }
     }
