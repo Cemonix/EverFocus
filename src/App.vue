@@ -10,8 +10,9 @@
       <RouterView/>
     </main>
     <nav class="navbar">
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/block">Block</RouterLink>
+      <RouterLink to="/">Settings</RouterLink>
+      <RouterLink to="/blocker">Blocker</RouterLink>
+      <RouterLink to="/stats">Stats</RouterLink>
     </nav>
   </div>
 </template>

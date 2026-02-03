@@ -3,22 +3,22 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
     {
         path: '/',
-        name: 'Home',
-        component: () => import('./pages/HomePage.vue')
+        name: 'Settings',
+        component: () => import('./pages/SettingsPage.vue')
     },
     {
-        path: '/block',
-        name: 'Block',
-        component: () => import('./pages/BlockNewSitePage.vue')
+        path: '/blocker',
+        name: 'Blocker',
+        component: () => import('./pages/BlockerPage.vue')
     },
     {
-        path: '/edit/:site',
-        name: 'Edit',
-        component: () => import('./pages/EditPage.vue')
+        path: '/stats',
+        name: 'Stats',
+        component: () => import('./pages/StatsPage.vue')
     },
     {
         path: '/:pathMatch(.*)*',
-        redirect: { name: 'Home' }
+        redirect: { name: 'Settings' }
     }
 ]
 
