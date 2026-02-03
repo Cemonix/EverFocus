@@ -10,15 +10,15 @@
     "build-watch": "vite build --watch"
   },
   "dependencies": {
-    "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue": "^3.5.27",
+    "vue-router": "^5.0.2"
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.308",
-    "@vitejs/plugin-vue": "^5.2.1",
-    "@vue/tsconfig": "^0.7.0",
-    "typescript": "~5.7.2",
-    "vite": "^6.2.0",
-    "vue-tsc": "^2.2.4"
+    "@types/chrome": "^0.1.36",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "@vue/tsconfig": "^0.8.1",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1",
+    "vue-tsc": "^3.2.4"
   }
 }
