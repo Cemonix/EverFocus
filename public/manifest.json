@@ -1,24 +1,28 @@
 {
     "manifest_version": 3,
     "name": "EverFocus",
-    "version": "1.0.0",
-    "description": "A browser extension to block sites and keep you focused.",
+    "version": "2.0.0",
+    "description": "Stay focused on YouTube with content blocking, time limits, and productivity features.",
     "background": {
-      "service_worker": "background.js"
+      "service_worker": "background.js",
+      "type": "module"
     },
     "permissions": [
       "tabs",
       "scripting",
-      "webNavigation",
-      "webRequest",
-      "storage"
+      "storage",
+      "alarms",
+      "notifications",
+      "webNavigation"
     ],
-    "web_accessible_resources": [{
-        "resources": ["blocked.html"],
-        "matches": ["<all_urls>"]
+    "content_scripts": [{
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": false
     }],
     "host_permissions": [
-      "<all_urls>"
+      "*://*/*"
     ],
     "action": {
       "default_popup": "index.html",
