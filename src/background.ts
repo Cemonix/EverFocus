@@ -33,7 +33,7 @@ function isBlockedSite(url: string, blockedSites: string[]): boolean {
                 .replace(/^www\./, '')
                 .split('/')[0]!
                 .split(':')[0]!;
-            return hostname === normalized || hostname.endsWith('.' + normalized);
+            return hostname === normalized || hostname === 'www.' + normalized;
         });
     } catch {
         return false;
@@ -256,11 +256,22 @@ async function updateTracking() {
     }
 }
 
+function isYouTubeUrl(url: string | undefined): boolean {
+    if (!url) return false;
+    try {
+        const hostname = new URL(url).hostname.toLowerCase();
+        return (hostname === 'youtube.com' || hostname.endsWith('.youtube.com'))
+            && hostname !== 'music.youtube.com';
+    } catch {
+        return false;
+    }
+}
+
 // Check if tab is YouTube
 async function isYouTubeTab(tabId: number): Promise<boolean> {
     try {
         const tab = await chrome.tabs.get(tabId);
-        return tab.url?.includes('youtube.com') || false;
+        return isYouTubeUrl(tab.url);
     } catch {
         return false;
     }
@@ -291,7 +302,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     }
 
     if (changeInfo.status === 'complete' && tab.active) {
-        const isYouTube = tab.url?.includes('youtube.com') || false;
+        const isYouTube = isYouTubeUrl(tab.url);
 
         if (isYouTube) {
             if (activeYouTubeTabId !== tabId) {
@@ -335,7 +346,7 @@ chrome.windows.onFocusChanged.addListener(async (windowId) => {
         try {
             const tabs = await chrome.tabs.query({ active: true, windowId: windowId });
             if (tabs[0]) {
-                const isYouTube = tabs[0].url?.includes('youtube.com') || false;
+                const isYouTube = isYouTubeUrl(tabs[0].url);
                 if (isYouTube) {
                     startTracking(tabs[0].id!);
                     notificationShown = false;
@@ -361,8 +372,9 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
             const settings: YouTubeSettings = (result.youtubeSettings as YouTubeSettings) || defaultSettings;
 
             if (settings.scheduleEnabled && isWithinScheduleBlock(settings.scheduleBlocks)) {
-                // Block YouTube during scheduled time
-                const tabs = await chrome.tabs.query({ url: '*://*.youtube.com/*' });
+                // Block YouTube during scheduled time (exclude YouTube Music)
+                const allYtTabs = await chrome.tabs.query({ url: '*://*.youtube.com/*' });
+                const tabs = allYtTabs.filter(tab => isYouTubeUrl(tab.url));
                 tabs.forEach(tab => {
                     if (tab.id) {
                         chrome.tabs.update(tab.id, {
